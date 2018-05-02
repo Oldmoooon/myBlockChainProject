@@ -7,12 +7,26 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+        <link rel="shortcut icon" href="http://guyue.name/img/favicon.ico">
         <title>结果</title>
     </head>
     <body>
 
         <h1 th:text="${msg}"></h1>
+
+        <table border="1">
+            <h4>RESULT</h4>
+            <table border="1">
+                <tr>
+                    <td>格式要素</td>
+                    <td>内容</td>
+                </tr>
+                <tr th:each="entry : ${entries}">
+                    <td th:text="${entry.key}"></td>
+                    <td th:text="${entry.value}"></td>
+                </tr>
+            </table>
+        </table>
 
         <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

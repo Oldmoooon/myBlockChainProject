@@ -282,4 +282,29 @@ public class OfficialDocument {
                         senderPublicKey, createDate, officialPublicKey, notes, enclosure,
                         copyToAuthority, printAuthority, printDate);
     }
+
+    @Override
+    public String toString() {
+        return "OfficialDocument{" +
+                "printNo='" + printNo + '\'' +
+                ", secretLevel='" + secretLevel + '\'' +
+                ", secretData='" + secretData + '\'' +
+                ", emergency='" + emergency + '\'' +
+                ", officialName='" + officialName + '\'' +
+                ", officialMark='" + officialMark + '\'' +
+                ", sender='" + sender + '\'' +
+                ", title='" + title + '\'' +
+                ", receivedAuthority='" + receivedAuthority + '\'' +
+                ", content='" + content + '\'' +
+                ", enclosureInfo='" + enclosureInfo + '\'' +
+                ", senderPublicKey='" + senderPublicKey + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", officialPublicKey='" + officialPublicKey + '\'' +
+                ", notes='" + notes + '\'' +
+                ", enclosure='" + enclosure + '\'' +
+                ", copyToAuthority='" + copyToAuthority + '\'' +
+                ", printAuthority='" + printAuthority + '\'' +
+                ", printDate='" + printDate + '\'' +
+                '}';
+    }
 }

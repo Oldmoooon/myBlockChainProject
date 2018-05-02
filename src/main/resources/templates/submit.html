@@ -1,63 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="shortcut icon" href="http://guyue.name/img/favicon.ico">
+        <title>添加一份公文</title>
+        <style>
+            .col-center-block {
+                float: none;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row row-centered">
+                <div class="col-xs-6 col-md-4 col-center-block">
+                <form method="post">
+                    <p></p>
+                    <input type="text" placeholder="份号" name="printNo">
+                    <p></p>
+                    <input type="text" placeholder="密级" name="secretLevel">
+                    <p></p>
+                    <input type="text" placeholder="保密期限" name="secretData">
+                    <p></p>
+                    <input type="text" placeholder="紧急程度" name="emergency">
+                    <p></p>
+                    <input type="text" placeholder="发文机关标志" name="officialName" required>
+                    <p></p>
+                    <input type="text" placeholder="发文字号" name="officialMark" required>
+                    <p></p>
+                    <input type="text" placeholder="签发人" name="sender" required>
+                    <p></p>
+                    <input type="text" placeholder="标题" name="title" required>
+                    <p></p>
+                    <input type="text" placeholder="主送机关" name="receivedAuthority" required>
+                    <p></p>
+                    <input type="text" placeholder="正文" name="content" required>
+                    <p></p>
+                    <input type="text" placeholder="附件说明" name="enclosureInfo">
+                    <p></p>
+                    <input type="text" placeholder="发文机关署名" name="senderPublicKey" required>
+                    <p></p>
+                    <input type="text" placeholder="成文日期" name="createDate" required>
+                    <p></p>
+                    <input type="text" placeholder="印章" name="officialPublicKey" required>
+                    <p></p>
+                    <input type="text" placeholder="附注" name="notes">
+                    <p></p>
+                    <input type="text" placeholder="附件" name="enclosure">
+                    <p></p>
+                    <input type="text" placeholder="抄送机关" name="copyToAuthority">
+                    <p></p>
+                    <input type="text" placeholder="印发机关" name="printAuthority">
+                    <p></p>
+                    <input type="text" placeholder="印发日期" name="printDate">
+                    <p></p>
+                    <input type="submit" value="提交">
+                    <p></p>
+                </form>
+                </div>
+            </div>
+        </div>
 
-    <title>添加一份公文</title>
-</head>
-<body>
-
-<form method="post">
-    <br><br>
-    <input type="text" placeholder="份号" name="printNo">
-    <br><br>
-    <input type="text" placeholder="密级" name="secretLevel">
-    <br><br>
-    <input type="text" placeholder="保密期限" name="secretData">
-    <br><br>
-    <input type="text" placeholder="紧急程度" name="emergency">
-    <br><br>
-    <input type="text" placeholder="发文机关标志" name="officialName" required>
-    <br><br>
-    <input type="text" placeholder="发文字号" name="officialMark" required>
-    <br><br>
-    <input type="text" placeholder="签发人" name="sender" required>
-    <br><br>
-    <input type="text" placeholder="标题" name="title" required>
-    <br><br>
-    <input type="text" placeholder="主送机关" name="receivedAuthority" required>
-    <br><br>
-    <input type="text" placeholder="正文" name="content" required>
-    <br><br>
-    <input type="text" placeholder="附件说明" name="enclosureInfo">
-    <br><br>
-    <input type="text" placeholder="发文机关署名" name="senderPublicKey" required>
-    <br><br>
-    <input type="text" placeholder="成文日期" name="createDate" required>
-    <br><br>
-    <input type="text" placeholder="印章" name="officialPublicKey" required>
-    <br><br>
-    <input type="text" placeholder="附注" name="notes">
-    <br><br>
-    <input type="text" placeholder="附件" name="enclosure">
-    <br><br>
-    <input type="text" placeholder="抄送机关" name="copyToAuthority">
-    <br><br>
-    <input type="text" placeholder="印发机关" name="printAuthority">
-    <br><br>
-    <input type="text" placeholder="印发日期" name="printDate">
-    <br><br>
-    <input type="submit" value="提交">
-    <br><br>
-</form>
-
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</body>
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
 </html>

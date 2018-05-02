@@ -9,20 +9,54 @@
         <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
         <title>首页</title>
+        <link rel="shortcut icon" href="http://guyue.name/img/favicon.ico">
+        <style type="text/css">
+        *{margin: 0;padding: 0}
+        html,body{height: 100%}     /*这里很关键*/
+        .outer-wrap{
+            /*只有同时为html和body设置height: 100%时，这里才生效，
+            并且随浏览器窗口变化始终保持和浏览器视窗等高*/
+            height: 100%;
+            position: relative;
+            background-image: url('https://ws1.sinaimg.cn/large/006tNc79gy1fqs5ubw5nhj31hc0xcndv.jpg');
+        }
+        .search-panel{
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+        }
+    </style>
     </head>
     <body>
-
-        <form method="post">
-            <br><br>
-            <input type="text" class="form-control" placeholder="请输入想要查找的公文发文字号" name="documentId">
-            <br><br>
-            <center>
-                <input type="submit" class="btn btn-default" value="提交">
-                <input type="button" class="btn btn-default" value="添加" onclick="location.href='./submit.html'">
-            </center>
-            <br><br>
-        </form>
-
+        <div class="outer-wrap">
+            <div class="search-panel">
+                <div class="container">
+                    <div class="row row-centered">
+                        <div class="well col-md-12 col-centered">
+                            <div class="center-block">
+                                <form method="post">
+                                    <br><br>
+                                    <input type="text" class="form-control" placeholder="请输入想要查找的公文发文字号" name="documentId">
+                                    <br><br>
+                                    <center>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <input type="submit" class="btn btn-default" value="提交">
+                                            <input type="button" class="btn btn-default" value="添加" onclick="location.href='./submit.html'">
+                                        </div>
+                                    </center>
+                                    <br><br>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

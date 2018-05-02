@@ -36,4 +36,14 @@ public class Constants {
      * http web server listen port
      */
     public final static int HTTP_PORT = 8080;
+
+    /**
+     * redis server host
+     */
+    public final static String REDIS_HOST = "127.0.0.1";
+
+    /**
+     * redis server port
+     */
+    public final static int REDIS_PORT = 6379;
 }

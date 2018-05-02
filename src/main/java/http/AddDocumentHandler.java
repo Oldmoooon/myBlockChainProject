@@ -61,7 +61,7 @@ public class AddDocumentHandler implements IHttpHandler {
         routingContext.vertx().executeBlocking(future -> {
             try {
                 TransactionReceipt send = ContractManager.getContract().setDocument(key, documentJson, BigInteger.ZERO, BigInteger.ZERO).send();
-                WebServer.getLog().debug("document official name {} transaction receipt is {}, document key is {}", officialName, send, key);
+                WebServer.getLog().debug("document official name {} transaction receipt is {}, document key is {}.", officialName, send, key);
                 future.complete(send);
             } catch (Exception e) {
                 WebServer.getLog().error(e, "try send contract set command error.");

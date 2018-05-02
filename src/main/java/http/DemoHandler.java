@@ -12,12 +12,12 @@ public class DemoHandler implements IHttpHandler {
     public void run(RoutingContext routingContext) {
         String page = routingContext.request().path();
         ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
-        templateEngine.render(routingContext, "templates", page, bufferAsyncResult -> {
+        templateEngine.render(routingContext, "templates/", page, bufferAsyncResult -> {
             if (bufferAsyncResult.succeeded()) {
                 routingContext.response().putHeader("content-type", "Content-Type: text/html; charset=utf-8")
                         .end(bufferAsyncResult.result());
             } else {
-                routingContext.reroute("/index.html");
+                routingContext.reroute("index.html");
             }
         });
     }

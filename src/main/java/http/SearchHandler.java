@@ -4,7 +4,11 @@ import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
 import contract.DocumentManager;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 import model.OfficialDocument;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author guyue
@@ -28,7 +32,24 @@ public class SearchHandler implements IHttpHandler {
             }
         }, asyncResult -> {
             if (asyncResult.succeeded()) {
-                routingContext.response().end(JSON.toJSONString(asyncResult.result()));
+                if (asyncResult.result() == null) {
+                    routingContext.response().end("search error: nonexistence");
+                    return;
+                }
+                WebServer.getLog().debug("search document id {} success, result is {}.", documentId, asyncResult.result().toString());
+                Set<Map.Entry<String, Object>> entries = JSON
+                        .parseObject(JSON.toJSONString(asyncResult.result())).entrySet();
+                ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
+                routingContext.put("msg", "success search document in block-chain.");
+                routingContext.put("entries", entries);
+                templateEngine.render(routingContext, "templates/", "result.html", bufferAsyncResult -> {
+                    if (bufferAsyncResult.succeeded()) {
+                        routingContext.response().putHeader("content-type", "Content-Type: text/html; charset=utf-8")
+                                .end(bufferAsyncResult.result());
+                    } else {
+                        routingContext.fail(asyncResult.cause());
+                    }
+                });
             } else {
                 routingContext.fail(asyncResult.cause());
             }
