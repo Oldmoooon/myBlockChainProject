@@ -10,20 +10,20 @@ import java.util.concurrent.TimeUnit;
  * @author guyue
  * @date 2018/4/21
  */
-public class MyServerAgent {
+class MyServerAgent {
     private static Log log = LogFactory.get();
 
     private static Vertx vertx;
 
     private static String deploymentId;
 
-    public static void init() {
+    static void init() {
         ContractManager.init();
         log.info("contract init OK !");
         addShutdownHook();
     }
 
-    public static void start() {
+    static void start() {
         vertx = Vertx.vertx();
         vertx.deployVerticle(new WebServer(), stringAsyncResult -> {
             if (stringAsyncResult.succeeded()) {
@@ -35,7 +35,7 @@ public class MyServerAgent {
         });
     }
 
-    public static void stop() {
+    private static void stop() {
         vertx.undeploy(deploymentId, voidAsyncResult -> {
             if (voidAsyncResult.succeeded()) {
                 log.info("undeploy web server verticle success.");
@@ -49,18 +49,15 @@ public class MyServerAgent {
     }
 
     private static void addShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                log.info("shutdown hook execute start...");
-                stop();
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    log.error(e, "wait server shutdown error.");
-                }
-                log.info("stop server success.");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("shutdown hook execute start...");
+            stop();
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                log.error(e, "wait server shutdown error.");
             }
+            log.info("stop server success.");
         }));
     }
 }

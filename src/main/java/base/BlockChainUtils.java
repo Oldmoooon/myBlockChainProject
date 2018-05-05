@@ -17,8 +17,8 @@ public class BlockChainUtils {
 
     private volatile static Admin admin;
     /**
-     * create a web3j instance and return it.
-     * @return web3j
+     * create a web3j admin instance and return it.
+     * @return web3j admin
      */
     public static Admin getAdmin() {
         if (admin == null) {

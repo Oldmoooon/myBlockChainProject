@@ -18,14 +18,9 @@ public class Constants {
     public final static String WALLET_FILE_DICT = "/data/scripts/wallets/";
 
     /**
-     * the wallet mnemonic of ganache
-     */
-    public final static String GANACHE_WALLET_MNEMONIC = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
-
-    /**
      * first private key in ganache
      */
-    public final static String PRIVATE_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
+    public final static String PRIVATE_KEY = "18f91ccecbe798f5c05e90e0da7a8b0494e8f587915d944df223d2e66fbea898";
 
     /**
      * http web server bind host
@@ -46,4 +41,9 @@ public class Constants {
      * redis server port
      */
     public final static int REDIS_PORT = 6379;
+
+    /**
+     * ipfs path
+     */
+    public final static String IPFS_PATH = "/ip4/127.0.0.1/tcp/5001";
 }

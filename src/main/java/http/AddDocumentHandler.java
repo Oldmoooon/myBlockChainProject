@@ -1,24 +1,35 @@
 package http;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import dao.IpfsDao;
+import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
+import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 import model.OfficialDocument;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
+import java.io.File;
 import java.math.BigInteger;
+import java.util.Set;
 
 /**
  * @author guyue
  * @date 2018/4/25
  */
 public class AddDocumentHandler implements IHttpHandler {
+    private static Log log = LogFactory.get();
+
     @Override
     public void run(RoutingContext routingContext) {
         HttpServerRequest request = routingContext.request();
-        WebServer.getLog().info("add document post request is {}", JSON.toJSONString(request));
+        log.info("add document post request is {}", JSON.toJSONString(request));
         String printNo = request.getParam("printNo");
         String secretLevel = request.getParam("secretLevel");
         String secretData = request.getParam("secretData");
@@ -34,7 +45,6 @@ public class AddDocumentHandler implements IHttpHandler {
         String createDate = request.getParam("createDate");
         String officialPublicKey = request.getParam("officialPublicKey");
         String notes = request.getParam("notes");
-        String enclosure = request.getParam("enclosure");
         String copyToAuthority = request.getParam("copyToAuthority");
         String printAuthority = request.getParam("printAuthority");
         String printDate = request.getParam("printDate");
@@ -52,19 +62,33 @@ public class AddDocumentHandler implements IHttpHandler {
         document.setEmergency(emergency);
         document.setEnclosureInfo(enclosureInfo);
         document.setNotes(notes);
-        document.setEnclosure(enclosure);
         document.setCopyToAuthority(copyToAuthority);
         document.setPrintAuthority(printAuthority);
         document.setPrintDate(printDate);
-        String documentJson = JSON.toJSONString(document);
+
+        FileUpload fileUpload = routingContext.fileUploads().iterator().next();
+        log.debug("file up loaded, file upload file name is {}, file name is {}, name is {}.",fileUpload.uploadedFileName(), fileUpload.fileName(), fileUpload.name());
+        File file = new File(fileUpload.uploadedFileName());
+        log.debug("file {} up load size is {}.", file.getAbsolutePath(), file.length());
+        String save = IpfsDao.save(document.getOfficialMark(), FileUtil.readBytes(file));
+        FileUtil.del(file);
+        document.setEnclosure(save);
+
         String key = String.valueOf(document.hashCode());
+        String documentJson = JSON.toJSONString(document);
         routingContext.vertx().executeBlocking(future -> {
             try {
                 TransactionReceipt send = ContractManager.getContract().setDocument(key, documentJson, BigInteger.ZERO, BigInteger.ZERO).send();
-                WebServer.getLog().debug("document official name {} transaction receipt is {}, document key is {}.", officialName, send, key);
+                log.debug("document official name {} transaction receipt is {}, document key is {}, enclosure base58 is {}.", officialName, send, key, document.getEnclosure());
+                try {
+                    RedisDao.getRedis().sadd(document.getOfficialMark(), key);
+                } catch (Exception e) {
+                    log.error(e, "save document official mark {} in redis error, key(hashcode) is {}.", document.getOfficialMark(), key);
+                }
+                log.debug("save document official mark {} in redis success, key(hashcode) is {}.", document.getOfficialMark(), key);
                 future.complete(send);
             } catch (Exception e) {
-                WebServer.getLog().error(e, "try send contract set command error.");
+                log.error(e, "try send contract set command error.");
                 future.fail(e);
             }
         }, asyncResult -> {

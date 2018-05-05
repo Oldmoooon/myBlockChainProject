@@ -32,10 +32,6 @@ public enum HttpHandlerEnum {
         }
     }
 
-    public static IHttpHandler findHandler(HttpMethod method, String path) {
-        return map.get(keyOf(method, path));
-    }
-
     private static String keyOf(HttpMethod method, String path) {
         return method.name() + path;
     }

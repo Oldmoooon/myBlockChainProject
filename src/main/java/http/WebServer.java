@@ -11,8 +11,6 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
-import java.util.logging.Logger;
-
 /**
  * @author guyue
  * @date 2018/4/21
@@ -37,6 +35,7 @@ public class WebServer extends AbstractVerticle {
         }
 
         HttpServer httpServer = vertx.createHttpServer();
+        httpServer.requestHandler(request -> request.setExpectMultipart(true));
         httpServer.requestHandler(router::accept);
         httpServer.listen(Constants.HTTP_PORT, Constants.HTTP_HOST, httpServerAsyncResult -> {
             if (httpServerAsyncResult.succeeded()) {

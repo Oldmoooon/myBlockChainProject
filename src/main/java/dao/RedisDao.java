@@ -1,4 +1,4 @@
-package Dao;
+package dao;
 
 import base.Constants;
 import redis.clients.jedis.Jedis;

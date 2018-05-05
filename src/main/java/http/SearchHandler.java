@@ -1,5 +1,6 @@
 package http;
 
+import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
 import contract.DocumentManager;
@@ -8,6 +9,7 @@ import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 import model.OfficialDocument;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -19,24 +21,30 @@ public class SearchHandler implements IHttpHandler {
     public void run(RoutingContext routingContext) {
         String documentId = routingContext.request().getParam("documentId");
         WebServer.getLog().info("some one try to search document id {}.", documentId);
+        Set<String> hashKeys = RedisDao.getRedis().smembers(documentId);
+        if (hashKeys == null || hashKeys.size() == 0) {
+            routingContext.response().end("search error: nonexistence | redis.");
+            return;
+        }
+        String key = Objects.requireNonNull(hashKeys).iterator().next();
         routingContext.vertx().executeBlocking(future -> {
             try {
                 DocumentManager documentManager = ContractManager.getContract();
-                String documentStr = documentManager.getDocument(documentId).send();
+                String documentStr = documentManager.getDocument(key).send();
                 WebServer.getLog().debug("get document from blockchain success : {}", documentStr);
                 OfficialDocument document = JSON.parseObject(documentStr, OfficialDocument.class);
                 future.complete(document);
             } catch (Exception e) {
-                WebServer.getLog().error(e, "try to get the document {} error.", documentId);
+                WebServer.getLog().error(e, "try to get the document {} error, key is {}.", documentId, key);
                 future.fail(e);
             }
         }, asyncResult -> {
             if (asyncResult.succeeded()) {
                 if (asyncResult.result() == null) {
-                    routingContext.response().end("search error: nonexistence");
+                    routingContext.response().end("search error: nonexistence | block-chain.");
                     return;
                 }
-                WebServer.getLog().debug("search document id {} success, result is {}.", documentId, asyncResult.result().toString());
+                WebServer.getLog().debug("search document id {} success, key is {}, result is {}.", documentId, key, asyncResult.result().toString());
                 Set<Map.Entry<String, Object>> entries = JSON
                         .parseObject(JSON.toJSONString(asyncResult.result())).entrySet();
                 ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();

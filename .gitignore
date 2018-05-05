@@ -30,3 +30,6 @@ hs_err_pid*
 
 # target files
 target/*
+
+# upload files
+file-uploads/*
