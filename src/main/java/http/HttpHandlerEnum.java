@@ -2,8 +2,6 @@ package http;
 
 import io.vertx.core.http.HttpMethod;
 
-import java.util.HashMap;
-
 /**
  * @author guyue
  * @date 2018/4/21
@@ -23,18 +21,6 @@ public enum HttpHandlerEnum {
      */
     SEARCH_DOCUMENT(HttpMethod.POST, "/", new SearchHandler()),
     ;
-
-    private static HashMap<String, IHttpHandler> map = new HashMap<>();
-
-    static {
-        for (HttpHandlerEnum per : values()) {
-            map.put(keyOf(per.method, per.path), per.handler);
-        }
-    }
-
-    private static String keyOf(HttpMethod method, String path) {
-        return method.name() + path;
-    }
 
     HttpHandlerEnum(HttpMethod method, String path, IHttpHandler handler) {
         this.method = method;

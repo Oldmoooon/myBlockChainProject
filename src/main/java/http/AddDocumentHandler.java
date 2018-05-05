@@ -7,7 +7,6 @@ import dao.IpfsDao;
 import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
-import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
@@ -17,7 +16,6 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.Set;
 
 /**
  * @author guyue
@@ -70,9 +68,13 @@ public class AddDocumentHandler implements IHttpHandler {
         log.debug("file up loaded, file upload file name is {}, file name is {}, name is {}.",fileUpload.uploadedFileName(), fileUpload.fileName(), fileUpload.name());
         File file = new File(fileUpload.uploadedFileName());
         log.debug("file {} up load size is {}.", file.getAbsolutePath(), file.length());
-        String save = IpfsDao.save(document.getOfficialMark(), FileUtil.readBytes(file));
+        if (file.length() > 0) {
+            String save = IpfsDao.save(document.getOfficialMark(), FileUtil.readBytes(file));
+            document.setEnclosure(save);
+        } else {
+            document.setEnclosure("");
+        }
         FileUtil.del(file);
-        document.setEnclosure(save);
 
         String key = String.valueOf(document.hashCode());
         String documentJson = JSON.toJSONString(document);
@@ -95,6 +97,7 @@ public class AddDocumentHandler implements IHttpHandler {
             if (asyncResult.succeeded()) {
                 ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
                 routingContext.put("msg", "success save a document on blockchain.");
+                routingContext.put("entries", JSON.parseObject(documentJson).entrySet());
                 templateEngine.render(routingContext, "templates/", "result.html", bufferAsyncResult -> {
                     if (bufferAsyncResult.succeeded()) {
                         routingContext.response()

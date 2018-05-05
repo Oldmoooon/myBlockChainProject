@@ -3,23 +3,18 @@ package dao;
 import base.Constants;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author guyue
  * @date 2018/5/3
  */
 public class IpfsDao {
-    private final static String IPFS_REDIS_KEY = "ipfs";
-
     private volatile static IPFS ipfs = new IPFS(Constants.IPFS_PATH);
 
     private static Log log = LogFactory.get();
@@ -45,6 +40,9 @@ public class IpfsDao {
     }
 
     public static byte[] query(String base58) {
+        if (base58 == null || "".endsWith(base58)) {
+            return null;
+        }
         Multihash multihash = Multihash.fromBase58(base58);
         try {
             return ipfs.cat(multihash);
