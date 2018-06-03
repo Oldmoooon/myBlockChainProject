@@ -2,10 +2,12 @@ package base;
 
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import contract.ContractManager;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * @author guyue
@@ -35,5 +37,15 @@ public class BlockChainUtils {
             }
         }
         return admin;
+    }
+
+    public static String createDocumentId() {
+        try {
+            return ContractManager.getContract().getDocumentCount().send().add(BigInteger
+                    .valueOf(1)).toString();
+        } catch (Exception e) {
+            log.error(e, "create DocumentId error.");
+        }
+        return String.valueOf(-1);
     }
 }

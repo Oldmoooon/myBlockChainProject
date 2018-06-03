@@ -27,9 +27,13 @@ hs_err_pid*
 # about IDE
 .idea/*
 *.iml
+.classpath
+.settings/*
+.project
 
 # target files
 target/*
 
 # upload files
 file-uploads/*
+/target/

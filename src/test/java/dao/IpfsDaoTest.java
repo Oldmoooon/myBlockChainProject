@@ -9,8 +9,8 @@ public class IpfsDaoTest {
     public void test() {
         String file = "Bitcoin: A Peer-to-Peer Electronic Cash System";
         String name = "test";
-        IpfsDao.save(name, file.getBytes());
-        byte[] bytes = IpfsDao.query(name);
+        String save = IpfsDao.save(name, file.getBytes());
+        byte[] bytes = IpfsDao.query(save);
         assert bytes != null;
         LogFactory.get().info("success, result is \"{}\".", new String(bytes));
     }

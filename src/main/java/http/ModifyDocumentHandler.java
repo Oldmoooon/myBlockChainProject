@@ -1,14 +1,13 @@
 package http;
 
 import base.BlockChainUtils;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import dao.IpfsDao;
-import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
+import dao.IpfsDao;
+import dao.RedisDao;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
@@ -21,9 +20,9 @@ import java.math.BigInteger;
 
 /**
  * @author guyue
- * @date 2018/4/25
+ * @date 2018/5/27
  */
-public class AddDocumentHandler implements IHttpHandler {
+public class ModifyDocumentHandler implements IHttpHandler {
     private static Log log = LogFactory.get();
 
     @Override
@@ -48,7 +47,7 @@ public class AddDocumentHandler implements IHttpHandler {
         String copyToAuthority = request.getParam("copyToAuthority");
         String printAuthority = request.getParam("printAuthority");
         String printDate = request.getParam("printDate");
-        String committer = request.getParam("committer");
+        String id = request.getParam("id");
         if ((officialName == null) || (officialMark == null) || (sender == null) || (title == null)
                 || (receivedAuthority == null) || (content == null) || (senderPublicKey == null)
                 || (createDate == null) || (officialPublicKey == null)) {
@@ -66,8 +65,6 @@ public class AddDocumentHandler implements IHttpHandler {
         document.setCopyToAuthority(copyToAuthority);
         document.setPrintAuthority(printAuthority);
         document.setPrintDate(printDate);
-        document.setCommitter(committer);
-        document.setCommitTime(DateUtil.currentSeconds());
 
         FileUpload fileUpload = routingContext.fileUploads().iterator().next();
         log.debug("file up loaded, file upload file name is {}, file name is {}, name is {}.",fileUpload.uploadedFileName(), fileUpload.fileName(), fileUpload.name());
@@ -81,18 +78,21 @@ public class AddDocumentHandler implements IHttpHandler {
         }
         FileUtil.del(file);
 
-        String key =BlockChainUtils.createDocumentId();
         String documentJson = JSON.toJSONString(document);
         routingContext.vertx().executeBlocking(future -> {
             try {
-                TransactionReceipt send = ContractManager.getContract().setDocument(key, documentJson, BigInteger.ZERO, BigInteger.ZERO).send();
-                log.debug("document official name {} transaction receipt is {}, document key is {}, enclosure base58 is {}.", officialName, send, key, document.getEnclosure());
+                TransactionReceipt send = ContractManager
+                        .getContract().setDocument(id, documentJson, BigInteger.ZERO, BigInteger.ZERO).send();
+                log.debug("document official name {} transaction receipt is {}, document key is {}, enclosure base58 is {}.", officialName, send,
+                        id, document.getEnclosure());
                 try {
-                    RedisDao.getRedis().sadd(document.getOfficialMark(), key);
+                    RedisDao.getRedis().sadd(document.getOfficialMark(), id);
                 } catch (Exception e) {
-                    log.error(e, "save document official mark {} in redis error, key(hashcode) is {}.", document.getOfficialMark(), key);
+                    log.error(e, "save document official mark {} in redis error, key(hashcode) is {}.", document.getOfficialMark(),
+                            id);
                 }
-                log.debug("save document official mark {} in redis success, key(hashcode) is {}.", document.getOfficialMark(), key);
+                log.debug("save document official mark {} in redis success, key(hashcode) is {}.", document.getOfficialMark(),
+                        id);
                 future.complete(send);
             } catch (Exception e) {
                 log.error(e, "try send contract set command error.");

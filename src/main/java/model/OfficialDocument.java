@@ -83,6 +83,14 @@ public class OfficialDocument {
      * 印发日期(可选)
      */
     private String printDate = "null";
+    /**
+     * 提交人
+     */
+    private String committer = "null";
+    /**
+     * 提交时间
+     */
+    private long commitTime = 0;
 
     public OfficialDocument() {
         this("必填","必填","必填","必填","必填","必填","必填","必填","必填");
@@ -252,6 +260,22 @@ public class OfficialDocument {
 
     public void setPrintDate(String printDate) {
         this.printDate = printDate;
+    }
+
+    public String getCommitter() {
+        return committer;
+    }
+
+    public void setCommitter(String committer) {
+        this.committer = committer;
+    }
+
+    public long getCommitTime() {
+        return commitTime;
+    }
+
+    public void setCommitTime(long commitTime) {
+        this.commitTime = commitTime;
     }
 
     @Override
