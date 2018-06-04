@@ -3,6 +3,8 @@ package base;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import contract.ContractManager;
+import model.Account;
+import model.OfficialDocument;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.http.HttpService;
 
@@ -39,13 +41,26 @@ public class BlockChainUtils {
         return admin;
     }
 
-    public static String createDocumentId() {
+    public static String createDocumentId(OfficialDocument document) {
         try {
-            return ContractManager.getContract().getDocumentCount().send().add(BigInteger
-                    .valueOf(1)).toString();
+            return document.getTitle();
         } catch (Exception e) {
             log.error(e, "create DocumentId error.");
         }
         return String.valueOf(-1);
+    }
+
+    public static boolean createAccount(Account user, Account creator) {
+        if (creator.getAuthority().intValue() <= user.getAuthority().intValue()) {
+            return false;
+        }
+        try {
+            ContractManager.getContract().addUser(user.getId(), user.getPassword(),
+                    user.getAuthority()).send();
+        } catch (Exception e) {
+            log.error(e, "create account error.");
+            return false;
+        }
+        return true;
     }
 }

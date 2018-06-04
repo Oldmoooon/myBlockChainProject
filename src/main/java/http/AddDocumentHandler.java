@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.alibaba.fastjson.JSONArray;
 import dao.IpfsDao;
 import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
@@ -81,39 +82,62 @@ public class AddDocumentHandler implements IHttpHandler {
         }
         FileUtil.del(file);
 
-        String key =BlockChainUtils.createDocumentId();
-        String documentJson = JSON.toJSONString(document);
+        String key =BlockChainUtils.createDocumentId(document);
+
         routingContext.vertx().executeBlocking(future -> {
+            JSONArray array;
             try {
-                TransactionReceipt send = ContractManager.getContract().setDocument(key, documentJson, BigInteger.ZERO, BigInteger.ZERO).send();
-                log.debug("document official name {} transaction receipt is {}, document key is {}, enclosure base58 is {}.", officialName, send, key, document.getEnclosure());
-                try {
-                    RedisDao.getRedis().sadd(document.getOfficialMark(), key);
-                } catch (Exception e) {
-                    log.error(e, "save document official mark {} in redis error, key(hashcode) is {}.", document.getOfficialMark(), key);
+                String json = ContractManager.getContract().getDocument(key).send();
+                if (json == null || "".equals(json)) {
+                    array = new JSONArray();
+                    array.add(document);
+                } else {
+                    array = JSONArray.parseArray(json);
+                    array.add(document);
                 }
-                log.debug("save document official mark {} in redis success, key(hashcode) is {}.", document.getOfficialMark(), key);
-                future.complete(send);
+                future.complete(array);
             } catch (Exception e) {
-                log.error(e, "try send contract set command error.");
-                future.fail(e);
+                log.error(e, "get document {} from blockchain error.", key);
             }
-        }, asyncResult -> {
-            if (asyncResult.succeeded()) {
-                ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
-                routingContext.put("msg", "success save a document on blockchain.");
-                routingContext.put("entries", JSON.parseObject(documentJson).entrySet());
-                templateEngine.render(routingContext, "templates/", "result.html", bufferAsyncResult -> {
-                    if (bufferAsyncResult.succeeded()) {
-                        routingContext.response()
-                                .putHeader("content-type", "Content-Type: text/html; charset=utf-8")
-                                .end(bufferAsyncResult.result());
+        }, result -> {
+            if (!result.succeeded()) {
+                log.error("something error happened.");
+            } else {
+                JSONArray documentJSON = (JSONArray) result.result();
+                String documentStr = documentJSON.toString();
+                routingContext.vertx().executeBlocking(future -> {
+                    try {
+                        TransactionReceipt send = ContractManager.getContract().setDocument(key, documentStr, BigInteger.ZERO, BigInteger.ZERO).send();
+                        log.debug("document official name {} transaction receipt is {}, document key is {}, enclosure base58 is {}.", officialName, send, key, document.getEnclosure());
+                        try {
+                            RedisDao.getRedis().sadd(document.getOfficialMark(), key);
+                        } catch (Exception e) {
+                            log.error(e, "save document official mark {} in redis error, key(hashcode) is {}.", document.getOfficialMark(), key);
+                        }
+                        log.debug("save document official mark {} in redis success, key(hashcode) is {}.", document.getOfficialMark(), key);
+                        future.complete(send);
+                    } catch (Exception e) {
+                        log.error(e, "try send contract set command error.");
+                        future.fail(e);
+                    }
+                }, asyncResult -> {
+                    if (asyncResult.succeeded()) {
+                        ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
+                        routingContext.put("msg", "success save a document on blockchain, and json array is " + documentStr + ".");
+                        routingContext.put("entries", documentJSON.getJSONObject(documentJSON.size() - 1).entrySet());
+                        templateEngine.render(routingContext, "templates/", "result.html", bufferAsyncResult -> {
+                            if (bufferAsyncResult.succeeded()) {
+                                routingContext.response()
+                                        .putHeader("content-type", "Content-Type: text/html; charset=utf-8")
+                                        .end(bufferAsyncResult.result());
+                            } else {
+                                routingContext.fail(bufferAsyncResult.cause());
+                            }
+                        });
                     } else {
-                        routingContext.fail(bufferAsyncResult.cause());
+                        routingContext.fail(asyncResult.cause());
                     }
                 });
-            } else {
-                routingContext.fail(asyncResult.cause());
             }
         });
     }

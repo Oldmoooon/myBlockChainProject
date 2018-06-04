@@ -4,6 +4,7 @@ import base.BlockChainUtils;
 import base.Constants;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import model.Account;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
@@ -51,6 +52,14 @@ public class ContractManager {
             log.info("deploy smart contract success, contract address is {}.", contract.getContractAddress());
         } catch (Exception e) {
             log.error(e, "deploy smart contract error.");
+        }
+        Account admin = new Account("admin", "admin", Integer.MAX_VALUE);
+        try {
+            contract.addUser(admin.getId(), admin.getPassword(),
+                    admin.getAuthority()).send();
+            log.info("create account {} success.", admin.getId());
+        } catch (Exception e) {
+            log.error(e, "create account {} error.", admin.getId());
         }
     }
 

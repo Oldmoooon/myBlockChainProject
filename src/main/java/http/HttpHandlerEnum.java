@@ -19,7 +19,11 @@ public enum HttpHandlerEnum {
     /**
      * search a official document in database and blockchain then return to browser
      */
-    SEARCH_DOCUMENT(HttpMethod.POST, "/", new SearchHandler()),
+    SEARCH_DOCUMENT(HttpMethod.POST, "/index", new SearchHandler()),
+    /**
+     * handle login request
+     */
+    LOGIN(HttpMethod.POST, "/login.html", new LoginHandler()),
     ;
 
     HttpHandlerEnum(HttpMethod method, String path, IHttpHandler handler) {

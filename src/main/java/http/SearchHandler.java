@@ -1,5 +1,6 @@
 package http;
 
+import com.alibaba.fastjson.JSONArray;
 import dao.RedisDao;
 import com.alibaba.fastjson.JSON;
 import contract.ContractManager;
@@ -32,8 +33,8 @@ public class SearchHandler implements IHttpHandler {
                 DocumentManager documentManager = ContractManager.getContract();
                 String documentStr = documentManager.getDocument(key).send();
                 WebServer.getLog().debug("get document from blockchain success : {}", documentStr);
-                OfficialDocument document = JSON.parseObject(documentStr, OfficialDocument.class);
-                future.complete(document);
+                JSONArray jsonArray = JSONArray.parseArray(documentStr);
+                future.complete(jsonArray);
             } catch (Exception e) {
                 WebServer.getLog().error(e, "try to get the document {} error, key is {}.", documentId, key);
                 future.fail(e);
@@ -44,11 +45,11 @@ public class SearchHandler implements IHttpHandler {
                     routingContext.response().end("search error: nonexistence | block-chain.");
                     return;
                 }
+                JSONArray jsonArray = (JSONArray) asyncResult.result();
                 WebServer.getLog().debug("search document id {} success, key is {}, result is {}.", documentId, key, asyncResult.result().toString());
-                Set<Map.Entry<String, Object>> entries = JSON
-                        .parseObject(JSON.toJSONString(asyncResult.result())).entrySet();
+                Set<Map.Entry<String, Object>> entries = jsonArray.getJSONObject(jsonArray.size() - 1).entrySet();
                 ThymeleafTemplateEngine templateEngine = ThymeleafTemplateEngine.create();
-                routingContext.put("msg", "success search document in block-chain.");
+                routingContext.put("msg", "success search document in block-chain, json array is " + jsonArray.toString() + ".");
                 routingContext.put("entries", entries);
                 templateEngine.render(routingContext, "templates/", "result.html", bufferAsyncResult -> {
                     if (bufferAsyncResult.succeeded()) {
